@@ -444,7 +444,7 @@ export default function App() {
             <img src={logoImg} alt="Logo Presensi" className="ios-brand-logo" />
             <div>
               <div className="ios-brand-title">Presensi Pengajian</div>
-              <div className="ios-brand-subtitle">Parenting Bersama Ustadz Wijayanto</div>
+              <div className="ios-brand-subtitle">Parenting Bersama Ust.Wijayanto</div>
             </div>
           </div>
 
@@ -455,12 +455,10 @@ export default function App() {
                 className="ios-btn ios-btn-admin"
                 onClick={() => setShowPinModal(true)}
               >
-                <Shield size={13} />
                 Admin
               </button>
             ) : (
               <>
-                <span className="ios-btn-admin-badge">Admin Active</span>
                 <button className="ios-btn-logout" onClick={handleAdminLogout}>
                   <LogOut size={13} />
                   Keluar
@@ -498,7 +496,7 @@ export default function App() {
               <form onSubmit={handleSubmitAttendance} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {/* GPS Status Card */}
                 <div>
-                  <div className="ios-section-label">Status Lokasi GPS</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>Status Lokasi GPS</div>
                   <div className="ios-card">
                     {locLoading ? (
                       <div className="ios-status-row">
@@ -569,7 +567,7 @@ export default function App() {
 
                 {/* Nama Lengkap */}
                 <div>
-                  <div className="ios-section-label">Nama Lengkap</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>Nama Lengkap</div>
                   <input
                     id="input-nama"
                     type="text"
@@ -583,7 +581,7 @@ export default function App() {
 
                 {/* Wali Siswa Dari */}
                 <div>
-                  <div className="ios-section-label">Wali Siswa Dari</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>Wali Siswa Dari</div>
                   <input
                     id="input-wali"
                     type="text"
@@ -597,7 +595,7 @@ export default function App() {
 
                 {/* Kelas */}
                 <div>
-                  <div className="ios-section-label">Kelas</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>Kelas</div>
                   <input
                     id="input-kelas"
                     type="text"
@@ -611,7 +609,7 @@ export default function App() {
 
                 {/* No HP */}
                 <div>
-                  <div className="ios-section-label">No HP / WhatsApp</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>No HP / WhatsApp</div>
                   <input
                     id="input-phone"
                     type="tel"
@@ -625,7 +623,7 @@ export default function App() {
 
                 {/* Camera */}
                 <div>
-                  <div className="ios-section-label">Bukti Foto Selfie</div>
+                  <div className="ios-section-label" style={{ color: 'var(--ios-blue)' }}>Bukti Foto Selfie</div>
                   <div className="ios-camera-wrap">
                     {cameraError ? (
                       <div style={{
@@ -998,7 +996,7 @@ export default function App() {
             {/* TAB 3: PANDUAN */}
             {activeTab === 'deploy' && (
               <div>
-                <div className="ios-section-label">Panduan Fitur Terkini</div>
+                <div className="ios-section-label">Panduan Fitur</div>
                 <div className="ios-card">
                   <div className="ios-card-section">
                     <p style={{ fontSize: 14, color: 'var(--ios-label-2)', lineHeight: 1.5, marginBottom: 12 }}>
