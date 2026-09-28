@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
-import logoImg from './assets/logo.jpeg'; // Pastikan logo.jpeg ada di folder src/assets/
+import logoImg from './assets/logo.png'; // Pastikan logo.jpeg ada di folder src/assets/
 
 // Inisialisasi Firebase
 const firebaseConfig = {
@@ -24,7 +24,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const DEFAULT_TARGET_LOCATION = {
-  name: 'Sawah Sekar Tani',
+  name: 'Pengajian',
   lat: -7.7599,
   lng: 110.4091,
   radius: 100
@@ -387,8 +387,8 @@ export default function App() {
           <div className="ios-brand">
             <img src={logoImg} alt="Logo Presensi" className="ios-brand-logo" />
             <div>
-              <div className="ios-brand-title">Presensi Sekar Tani</div>
-              <div className="ios-brand-subtitle">Bergerak Berdampak Migunani</div>
+              <div className="ios-brand-title">Presensi Pengajian Esmugano</div>
+              <div className="ios-brand-subtitle">Parenting Esmugano Bersama Ustadz Wijayanto</div>
             </div>
           </div>
 
@@ -464,7 +464,7 @@ export default function App() {
                       <>
                         <div className="ios-status-row">
                           <div>
-                            <div className="ios-caption">Jarak ke Target</div>
+                            <div className="ios-caption">Jarak Ke Lokasi</div>
                             <div className="ios-body-lg" style={{ marginTop: 2 }}>
                               {distance !== null ? `${Math.round(distance)} meter` : '—'}
                             </div>
@@ -994,7 +994,7 @@ export default function App() {
                 id="input-pin-admin"
                 type="password"
                 required
-                placeholder="Akses Masuk Izin Mirza"
+                placeholder="Akses Masuk Izin Admin"
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
                 className="ios-input"
@@ -1061,6 +1061,19 @@ export default function App() {
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
+
+    
+    <div className="min-h-screen flex flex-col justify-between">
+      {/* Konten Utama Aplikasi Anda */}
+      <main className="ios-main">
+        {/* ... isi komponen presensi / konten web ... */}
+      </main>
+
+      {/* Teks Bagian Bawah (Footer) */}
+      <footer className="ios-footer">
+        <p>© {new Date().getFullYear()} SD Muhammadiyah Gantiwarno</p>
+      </footer>
+    </div>
     </div>
   );
 }
