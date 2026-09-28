@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
+import ExcelJS from 'exceljs';
 import logoImg from './assets/logo.png'; // Pastikan logo.jpeg ada di folder src/assets/
 
 // Inisialisasi Firebase
@@ -347,31 +348,86 @@ export default function App() {
     }
   };
 
-  const exportToCSV = () => {
-    if (attendanceLogs.length === 0) { alert('Tidak ada data untuk diekspor.'); return; }
-    const headers = ['ID', 'Waktu', 'Nama Lengkap', 'Wali Siswa Dari', 'Kelas', 'No HP', 'Jarak (m)', 'Latitude', 'Longitude'];
-    const rows = attendanceLogs.map((log) => [
-      log.id,
-      `"${log.timestamp}"`,
-      `"${log.name}"`,
-      `"${log.guardianOf || '-'}"`,
-      `"${log.classRoom || '-'}"`,
-      `"${log.phone || '-'}"`,
-      log.distance,
-      log.lat,
-      log.lng,
-    ]);
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+  const exportToExcel = async () => {
+    if (attendanceLogs.length === 0) {
+      alert('Tidak ada data untuk diekspor.');
+      return;
+    }
+
+    // 1. Buat Workbook & Worksheet baru
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Rekap Presensi');
+
+    // 2. Tentukan Header dan Lebar Kolom
+    worksheet.columns = [
+      { header: 'No', key: 'no', width: 6 },
+      { header: 'Foto Selfie', key: 'photo', width: 16 },
+      { header: 'Waktu & Tanggal', key: 'timestamp', width: 24 },
+      { header: 'Nama Lengkap', key: 'name', width: 25 },
+      { header: 'Wali Siswa', key: 'guardianOf', width: 25 },
+      { header: 'Kelas', key: 'classRoom', width: 12 },
+      { header: 'No HP', key: 'phone', width: 18 },
+    ];
+
+    // Styling Header
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+    headerRow.height = 25;
+
+    // 3. Masukkan Data dan Foto ke Spreadsheet
+    for (let index = 0; index < attendanceLogs.length; index++) {
+      const log = attendanceLogs[index];
+      const rowIndex = index + 2; // Baris data dimulai dari baris ke-2 (karena baris 1 adalah header)
+
+      const row = worksheet.addRow({
+        no: index + 1,
+        photo: '', // Diisi kosong karena gambar akan disisipkan secara langsung
+        timestamp: log.timestamp || '-',
+        name: log.name || '-',
+        guardianOf: log.guardianOf || '-',
+        classRoom: log.classRoom || '-',
+        phone: log.phone || '-',
+      });
+
+      // Atur tinggi baris agar muat untuk foto
+      row.height = 65;
+      row.alignment = { vertical: 'middle', horizontal: 'left' };
+      worksheet.getCell(`A${rowIndex}`).alignment = { vertical: 'middle', horizontal: 'center' };
+
+      // 4. Sisipkan Gambar Selfie jika ada
+      if (log.photo && log.photo.startsWith('data:image')) {
+        try {
+          const imageId = workbook.addImage({
+            base64: log.photo,
+            extension: 'jpeg',
+          });
+
+          // Tempatkan foto di kolom B (col: 1) pada baris yang sesuai
+          worksheet.addImage(imageId, {
+            tl: { col: 1, row: rowIndex - 1 }, // Koordinat kiri-atas sel (0-indexed)
+            ext: { width: 75, height: 75 },   // Ukuran gambar (piksel)
+            editAs: 'undefined',
+          });
+        } catch (error) {
+          console.error('Gagal menyisipkan foto ke Excel:', error);
+        }
+      }
+    }
+
+    // 5. Buat File & Unduh (.xlsx)
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+
     const link = document.createElement('a');
-    link.setAttribute('href', encodeURI(csvContent));
-    link.setAttribute('download', `rekap_presensi_${Date.now()}.csv`);
+    link.href = url;
+    link.setAttribute('download', `rekap_presensi_${Date.now()}.xlsx`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
-
   const filteredLogs = attendanceLogs.filter((log) =>
     log.name?.toLowerCase().includes(searchLog.toLowerCase()) ||
     log.guardianOf?.toLowerCase().includes(searchLog.toLowerCase()) ||
@@ -387,8 +443,8 @@ export default function App() {
           <div className="ios-brand">
             <img src={logoImg} alt="Logo Presensi" className="ios-brand-logo" />
             <div>
-              <div className="ios-brand-title">Presensi Pengajian Esmugano</div>
-              <div className="ios-brand-subtitle">Parenting Esmugano Bersama Ustadz Wijayanto</div>
+              <div className="ios-brand-title">Presensi Pengajian</div>
+              <div className="ios-brand-subtitle">Parenting Bersama Ustadz Wijayanto</div>
             </div>
           </div>
 
@@ -546,7 +602,7 @@ export default function App() {
                     id="input-kelas"
                     type="text"
                     required
-                    placeholder="Contoh: Kelas 1A / X IPA 2"
+                    placeholder="Contoh: Kelas 1A/2B/3C"
                     value={classRoom}
                     onChange={(e) => setClassRoom(e.target.value)}
                     className="ios-input"
@@ -697,13 +753,13 @@ export default function App() {
                       style={{ width: 160, padding: '8px 14px', fontSize: 14 }}
                     />
                     <button
-                      id="btn-export-csv"
+                      id="btn-export-excel"
                       className="ios-btn ios-btn-primary"
                       style={{ padding: '9px 16px', fontSize: 13 }}
-                      onClick={exportToCSV}
+                      onClick={exportToExcel}
                     >
                       <Download size={13} />
-                      Export CSV
+                      Export Excel (.xlsx)
                     </button>
                   </div>
                 </div>
