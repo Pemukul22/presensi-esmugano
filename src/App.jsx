@@ -10,12 +10,16 @@ import logoImg from './assets/logo.jpeg'; // Pastikan logo.jpeg ada di folder sr
 
 // Inisialisasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyC76Ec2SuBZ5UoDnv_NSeE0MHF0DyABc1E",
-  authDomain: "presensi-sekar-tani.firebaseapp.com",
-  databaseURL: "https://presensi-sekar-tani-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "presensi-sekar-tani",
+  apiKey: "AIzaSyAc2elpAHVD42iHPqWmYEsXJqA2taJkPq0",
+  authDomain: "presensi-esmugano.firebaseapp.com",
+  // Tambahkan databaseURL sesuai region Realtime Database Anda di Firebase Console
+  databaseURL: "https://presensi-esmugano-default-rtdb.asia-southeast1.firebasedatabase.app", 
+  projectId: "presensi-esmugano",
+  storageBucket: "presensi-esmugano.firebasestorage.app",
+  messagingSenderId: "607372207017",
+  appId: "1:607372207017:web:31533e9723b5a3c6e91ab8",
+  measurementId: "G-V77CB3REHX"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
